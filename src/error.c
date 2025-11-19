@@ -11,21 +11,22 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void *jfs_malloc(size_t size, jcl_err_t *err) {
+
+void *jcl_malloc(size_t size, jcl_err_t *err) {
     void *allocated_memory = malloc(size);
     NULL_FAIL_IF(allocated_memory == NULL, JCL_ERR_SYS);
 
     return allocated_memory;
 }
 
-void *jfs_realloc(void *ptr, size_t size, jcl_err_t *err) {
+void *jcl_realloc(void *ptr, size_t size, jcl_err_t *err) {
     void *allocated_memory = realloc(ptr, size);
     NULL_FAIL_IF(allocated_memory == NULL, JCL_ERR_SYS);
 
     return allocated_memory;
 }
 
-void jfs_lstat(const char *path_str, struct stat *stat_init, jcl_err_t *err) {
+void jcl_lstat(const char *path_str, struct stat *stat_init, jcl_err_t *err) {
     if (lstat(path_str, stat_init) != 0) {
         switch (errno) {
             case EACCES:  *err = JCL_ERR_ACCESS; break;
@@ -37,7 +38,7 @@ void jfs_lstat(const char *path_str, struct stat *stat_init, jcl_err_t *err) {
     }
 }
 
-DIR *jfs_opendir(const char *path_str, jcl_err_t *err) {
+DIR *jcl_opendir(const char *path_str, jcl_err_t *err) {
     DIR *dir = opendir(path_str);
     if (dir == NULL) {
         switch (errno) {
@@ -52,7 +53,7 @@ DIR *jfs_opendir(const char *path_str, jcl_err_t *err) {
     return dir;
 }
 
-void jfs_shutdown(int sock_fd, int how, jcl_err_t *err) {
+void jcl_shutdown(int sock_fd, int how, jcl_err_t *err) {
     if (shutdown(sock_fd, how) != 0) {
         switch (errno) {
             default: *err = JCL_ERR_SYS; break;
@@ -61,7 +62,7 @@ void jfs_shutdown(int sock_fd, int how, jcl_err_t *err) {
     }
 }
 
-struct addrinfo *jfs_getaddrinfo(const char *name, const char *port_str, const struct addrinfo *hints, jcl_err_t *err) {
+struct addrinfo *jcl_getaddrinfo(const char *name, const char *port_str, const struct addrinfo *hints, jcl_err_t *err) {
     struct addrinfo *result;
     int              status = getaddrinfo(name, port_str, hints, &result);
     if (status != 0) {
@@ -78,7 +79,7 @@ struct addrinfo *jfs_getaddrinfo(const char *name, const char *port_str, const s
     return result;
 }
 
-void jfs_bind(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jcl_err_t *err) {
+void jcl_bind(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jcl_err_t *err) {
     if (bind(sock_fd, addr, addrlen) != 0) {
         switch (errno) {
             default: *err = JCL_ERR_SYS; break;
@@ -87,7 +88,7 @@ void jfs_bind(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jcl_e
     }
 }
 
-void jfs_listen(int sock_fd, int backlog, jcl_err_t *err) {
+void jcl_listen(int sock_fd, int backlog, jcl_err_t *err) {
     if (listen(sock_fd, backlog) != 0) {
         switch (errno) {
             default: *err = JCL_ERR_SYS; break;
@@ -96,7 +97,7 @@ void jfs_listen(int sock_fd, int backlog, jcl_err_t *err) {
     }
 }
 
-int jfs_accept(int sock_fd, struct sockaddr *addr, socklen_t *addrlen, jcl_err_t *err) {
+int jcl_accept(int sock_fd, struct sockaddr *addr, socklen_t *addrlen, jcl_err_t *err) {
     int accepted_fd = accept(sock_fd, addr, addrlen);
     if (accepted_fd == -1) {
         switch (errno) {
@@ -118,7 +119,7 @@ int jfs_accept(int sock_fd, struct sockaddr *addr, socklen_t *addrlen, jcl_err_t
     return accepted_fd;
 }
 
-void jfs_connect(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jcl_err_t *err) {
+void jcl_connect(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jcl_err_t *err) {
     if (connect(sock_fd, addr, addrlen) != 0) {
         switch (errno) {
             case EAGAIN:       *err = JCL_ERR_AGAIN; break;
@@ -132,7 +133,7 @@ void jfs_connect(int sock_fd, const struct sockaddr *addr, socklen_t addrlen, jc
     }
 }
 
-size_t jfs_recv(int sock_fd, void *buf, size_t size, int flags, jcl_err_t *err) {
+size_t jcl_recv(int sock_fd, void *buf, size_t size, int flags, jcl_err_t *err) {
     ssize_t status = recv(sock_fd, buf, size, flags);
     if (status == -1) {
         switch (errno) {
@@ -146,7 +147,7 @@ size_t jfs_recv(int sock_fd, void *buf, size_t size, int flags, jcl_err_t *err) 
     return (size_t) status;
 }
 
-size_t jfs_send(int sock_fd, const void *buf, size_t size, int flags, jcl_err_t *err) {
+size_t jcl_send(int sock_fd, const void *buf, size_t size, int flags, jcl_err_t *err) {
     ssize_t status = send(sock_fd, buf, size, flags);
     if (status == -1) {
         switch (errno) {
@@ -162,7 +163,7 @@ size_t jfs_send(int sock_fd, const void *buf, size_t size, int flags, jcl_err_t 
     return (size_t) status;
 }
 
-int jfs_socket(int domain, int type, int protocol, jcl_err_t *err) {
+int jcl_socket(int domain, int type, int protocol, jcl_err_t *err) {
     int new_fd = socket(domain, type, protocol);
     if (new_fd == -1) {
         switch (errno) {
@@ -174,7 +175,7 @@ int jfs_socket(int domain, int type, int protocol, jcl_err_t *err) {
     return new_fd;
 }
 
-void jfs_close(int close_fd, jcl_err_t *err) {
+void jcl_close(int close_fd, jcl_err_t *err) {
     if (close(close_fd) == -1) {
         switch (errno) {
             default: *err = JCL_ERR_SYS; break;
@@ -183,7 +184,7 @@ void jfs_close(int close_fd, jcl_err_t *err) {
     }
 }
 
-void jfs_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr, jcl_err_t *err) {
+void jcl_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr, jcl_err_t *err) {
     if (pthread_mutex_init(mutex, attr) != 0) {
         switch (errno) {
             default: *err = JCL_ERR_SYS; break;
@@ -192,7 +193,7 @@ void jfs_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr, jcl
     }
 }
 
-void jfs_mutex_destroy(pthread_mutex_t *mutex, jcl_err_t *err) {
+void jcl_mutex_destroy(pthread_mutex_t *mutex, jcl_err_t *err) {
     if (pthread_mutex_destroy(mutex) != 0) {
         switch (errno) {
             case EBUSY: *err = JCL_ERR_MUTEX_BUSY; break;
@@ -202,7 +203,7 @@ void jfs_mutex_destroy(pthread_mutex_t *mutex, jcl_err_t *err) {
     }
 }
 
-void jfs_mutex_trylock(pthread_mutex_t *mutex, jcl_err_t *err) {
+void jcl_mutex_trylock(pthread_mutex_t *mutex, jcl_err_t *err) {
     if (pthread_mutex_trylock(mutex) != 0) {
         switch (errno) {
             case EBUSY: *err = JCL_ERR_MUTEX_BUSY; break;
@@ -212,7 +213,7 @@ void jfs_mutex_trylock(pthread_mutex_t *mutex, jcl_err_t *err) {
     }
 }
 
-void jfs_cond_destroy(pthread_cond_t *cond, jcl_err_t *err) {
+void jcl_cond_destroy(pthread_cond_t *cond, jcl_err_t *err) {
     if (pthread_cond_destroy(cond) != 0) {
         switch (errno) {
             case EBUSY: *err = JCL_ERR_COND_BUSY; break;
@@ -222,7 +223,7 @@ void jfs_cond_destroy(pthread_cond_t *cond, jcl_err_t *err) {
     }
 }
 
-void jfs_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *time, jcl_err_t *err) {
+void jcl_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *time, jcl_err_t *err) {
     if (pthread_cond_timedwait(cond, mutex, time) != 0) {
         switch (errno) {
             case ETIMEDOUT: *err = JCL_ERR_COND_TIMED_OUT; break;
@@ -232,7 +233,7 @@ void jfs_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const stru
     }
 }
 
-int jfs_eventfd(unsigned int initval, int flags, jcl_err_t *err) {
+int jcl_eventfd(unsigned int initval, int flags, jcl_err_t *err) {
     int event_fd = eventfd(initval, flags);
     if (event_fd == -1) {
         switch (errno) {
@@ -243,7 +244,7 @@ int jfs_eventfd(unsigned int initval, int flags, jcl_err_t *err) {
     return event_fd;
 }
 
-size_t jfs_read(int fd, void *buf, size_t size, jcl_err_t *err) {
+size_t jcl_read(int fd, void *buf, size_t size, jcl_err_t *err) {
     ssize_t status = read(fd, buf, size);
     if (status == -1) {
         switch (errno) {
@@ -256,7 +257,7 @@ size_t jfs_read(int fd, void *buf, size_t size, jcl_err_t *err) {
     return (size_t) status;
 }
 
-size_t jfs_write(int fd, const void *buf, size_t size, jcl_err_t *err) {
+size_t jcl_write(int fd, const void *buf, size_t size, jcl_err_t *err) {
     ssize_t status = write(fd, buf, size);
     if (status == -1) {
         switch (errno) {
@@ -270,7 +271,7 @@ size_t jfs_write(int fd, const void *buf, size_t size, jcl_err_t *err) {
     return (size_t) status;
 }
 
-void *jfs_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off, jcl_err_t *err) {
+void *jcl_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off, jcl_err_t *err) {
     void *mem = mmap(addr, len, prot, flags, fd, off);
     if (mem == MAP_FAILED) {
         switch (errno) {
@@ -281,7 +282,7 @@ void *jfs_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off, j
     return mem;
 }
 
-void *jfs_aligned_alloc(size_t align, size_t size, jcl_err_t *err) {
+void *jcl_aligned_alloc(size_t align, size_t size, jcl_err_t *err) {
     void *mem = NULL;
     int   status = posix_memalign(&mem, align, size);
     if (status != 0) {
